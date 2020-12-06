@@ -1,0 +1,9 @@
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+td{height : 40px; width :50px;}
+
+table {  margin-top: 50px; margin-left: 40px;
+}
