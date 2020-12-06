@@ -3,9 +3,11 @@
 
 <?php
 
-function show_status()
-	{
+function show_status(){
 	global $mysqli;
+	
+	check_abort();
+	
 	$sql='select * from game_status';
 	$st=$mysqli->prepare($sql);
 	
@@ -14,17 +16,15 @@ function show_status()
 
 	header('Content-type: application/json');
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+}
 
-	}
-
-function check_abort()
-	{
+function check_abort(){
 	global $mysqli;
 	
-	$sql = "update game_status set status='aborded', result=if(p_turn='W','B','W'),p_turn=null where p_turn is not null and last_change<(now()-INTERVAL 5 MINUTE) and status='started'";
+	$sql = "update game_status set status='aborded', result=if(p_turn='R','B','R'),p_turn=null where p_turn is not null and last_change<(now()-INTERVAL 5 MINUTE) and status='started'";
 	$st = $mysqli->prepare($sql);
 	$r = $st->execute();
-	}
+}
 
 function update_game_status()
 	{
@@ -67,7 +67,7 @@ function update_game_status()
 		case 1: $new_status='initialized'; break;
 		case 2: $new_status='started'; 
 				if($status['p_turn']==null) {
-					$new_turn='W'; // It was not started before...
+					$new_turn='B'; // It was not started before...
 				}
 				break;
 	}

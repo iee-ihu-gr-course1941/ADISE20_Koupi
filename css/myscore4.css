@@ -1,9 +1,12 @@
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
+﻿#score4_table TD {
+	width:3em; height:3em; border:1px solid black; text-align:center;
 }
-
-td{height : 40px; width :50px;}
-
-table {  margin-top: 50px; margin-left: 40px;
+#score4_table {
+	border-collapse:collapse;
+}
+TD.square{
+	background-color:white
+}
+IMG.piece_color{
+	width:2.5em; height:2.5em;
 }

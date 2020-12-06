@@ -24,20 +24,22 @@ switch ($r=array_shift($request))
             case '':
             case null: handle_board($method);
                 break;
-            case 'piece': handle_piece($method, $request[0],$request[1],$input);
+            case 'piece_color': handle_piece($method, $request[0],$request[1],$input);
                 break;
             default: header("HTTP/1.1 404 Not Found");
                 break;
             }
         break;
 
-    case 'players' :  handle_player($method,$request,$input);
-        break;
-
-    case 'status' : 
+	case 'status' : 
         if(sizeof($request)==0){show_status();}
         else {header("HTTP/1.1 404 Not Found");}
         break;
+
+	
+    case 'players' :  handle_player($method,$request,$input);
+        break;
+
 
     default:  header("HTTP/1.1 404 Not Found");
         exit;
@@ -79,8 +81,8 @@ function handle_player($method,$request,$input)
             else {header("HTTP/1.1 400 Bad Request");
                   print json_encode(['errormesg'=>"Method $method not allowed here"]);}
             break;
-        case '0':
-        case '1': handle_user($method,$b,$input);
+        case 'B':
+        case 'R': handle_user($method,$b,$input);
             break;
         default:
             header("HTTP/1.1 404 Not Found");
@@ -89,32 +91,6 @@ function handle_player($method,$request,$input)
         }
     }
  
-/*function handle_player($method,$request,$input)
-    {
-        print_r ($request[0]);
-
-    if($request[0]==null)
-        {
-        if($method=='GET')
-            {
-            show_players();
-            }
-        }
-    else if($request[0]!=null)
-        {
-        if($method=='GET')
-            {
-            show_player($request[0]);
-            }
-        else if($method=='PUT')
-            {
-            setPlayerName($request[0],$input);
-            }
-        }
-    else
-        header("HTTP/1.1 404 Not Found");
-  
-    }*/
 
 function handle_status($method)
     {

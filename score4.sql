@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 26, 2020 at 03:13 PM
+-- Generation Time: Dec 06, 2020 at 06:17 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.11
 
@@ -27,17 +27,6 @@ DELIMITER $$
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_board` ()  BEGIN
 	REPLACE INTO board SELECT * FROM board_empty;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `place_piece` (`x1` TINYINT, `y1` TINYINT, `pt` CHAR)  BEGIN
-    DECLARE p_color CHAR;
-
-    SELECT p_turn INTO p_color
-    FROM game_status WHERE pt=p_turn;
-
-    UPDATE board
-    SET piece_color=p_color
-    WHERE X=x1 AND Y=y1;
 END$$
 
 DELIMITER ;
@@ -193,8 +182,18 @@ DELIMITER ;
 
 CREATE TABLE `players` (
   `username` varchar(20) DEFAULT NULL,
-  `piece_color` enum('R','B') NOT NULL
+  `piece_color` enum('R','B') NOT NULL,
+  `token` varchar(100) DEFAULT NULL,
+  `last_action` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `players`
+--
+
+INSERT INTO `players` (`username`, `piece_color`, `token`, `last_action`) VALUES
+(NULL, 'R', NULL, NULL),
+(NULL, 'B', NULL, NULL);
 
 --
 -- Indexes for dumped tables
