@@ -1,12 +1,18 @@
-﻿#score4_table TD {
-	width:3em; height:3em; border:1px solid black; text-align:center;
+#score4_table TD {
+  width:3em; height:3em; border:1px solid black; text-align:center;
 }
-#score4_table {
-	border-collapse:collapse;
+#score4_table {     
+  border-collapse: separate; background: blue;    
+  border-spacing: 10px;
+
 }
 TD.square{
-	background-color:white
+  background-color:white; 
 }
 IMG.piece_color{
-	width:2.5em; height:2.5em;
+  width:2.5em; height:2.5em;
 }
+
+tr {background-color: white;}
+td { border: 0.1em solid black;
+    border-radius: 2em;}
