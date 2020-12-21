@@ -4,6 +4,7 @@ $pass='';
 $host='localhost';
 $db = 'score4';
 
+
 $mysqli = new mysqli($host, $user, $pass, $db);
 if ($mysqli->connect_errno) {
     echo "Failed to connect to MySQL: (" . 
