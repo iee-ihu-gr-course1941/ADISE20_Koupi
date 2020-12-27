@@ -46,10 +46,14 @@ function fill_board_by_data(data)
 	for(var i=0;i<data.length;i++)
 		{
 		var o = data[i];
+				console.log(o);
+
 		var id= '#square_'+o.x+'_'+o.y;
 		var c = (o.piece_color!=null)?o.piece_color:'';
-		var im = (o.piece_color!=null)?'<img class="piece_color" src="imgs/'+c+'_piece.png">':'';
-		$(id).addClass('square').html(im);
+		//var im = (o.piece_color!=null)?'<img class="piece_color" src="imgs/'+c+'_piece.png">':'';
+		//im== (o.piece_color!=null)? 
+		//$(id).addClass('square').html(im);
+		$(id).css("background-image", "url(imgs/"+c+"_piece.png)");
 		}
 	if(me.piece_color!=null && game_status.p_turn==me.piece_color)
 		{
