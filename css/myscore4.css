@@ -1,5 +1,5 @@
 #score4_table TD {
-  width:3em; height:3em; border:1px solid black; text-align:center;
+  width:3em; height:3em; border:1px solid black; text-align:center; background-position: center;
 }
 #score4_table {     border-collapse: separate; background: blue;    
 
