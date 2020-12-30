@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 21 Δεκ 2020 στις 16:33:18
+-- Χρόνος δημιουργίας: 30 Δεκ 2020 στις 14:15:30
 -- Έκδοση διακομιστή: 10.4.14-MariaDB
 -- Έκδοση PHP: 7.2.34
 
@@ -39,7 +39,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `place_piece` (IN `x1` TINYINT, IN `
 
     UPDATE board
     SET piece_color=p_color
-    WHERE x=x1 AND y=y1;
+    WHERE row=x1 AND col=y1;
     
     UPDATE game_status SET p_turn=IF(p_color='R','B','R');
 END$$
@@ -53,8 +53,8 @@ DELIMITER ;
 --
 
 CREATE TABLE `board` (
-  `x` tinyint(1) NOT NULL,
-  `y` tinyint(1) NOT NULL,
+  `row` tinyint(1) NOT NULL,
+  `col` tinyint(1) NOT NULL,
   `piece_color` enum('R','B') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -62,49 +62,49 @@ CREATE TABLE `board` (
 -- Άδειασμα δεδομένων του πίνακα `board`
 --
 
-INSERT INTO `board` (`x`, `y`, `piece_color`) VALUES
+INSERT INTO `board` (`row`, `col`, `piece_color`) VALUES
 (1, 1, NULL),
 (1, 2, NULL),
 (1, 3, NULL),
 (1, 4, NULL),
 (1, 5, NULL),
 (1, 6, NULL),
+(1, 7, NULL),
 (2, 1, NULL),
 (2, 2, NULL),
 (2, 3, NULL),
 (2, 4, NULL),
 (2, 5, NULL),
 (2, 6, NULL),
+(2, 7, NULL),
 (3, 1, NULL),
 (3, 2, NULL),
 (3, 3, NULL),
 (3, 4, NULL),
 (3, 5, NULL),
 (3, 6, NULL),
+(3, 7, NULL),
 (4, 1, NULL),
 (4, 2, NULL),
 (4, 3, NULL),
 (4, 4, NULL),
 (4, 5, NULL),
 (4, 6, NULL),
+(4, 7, NULL),
 (5, 1, NULL),
 (5, 2, NULL),
 (5, 3, NULL),
 (5, 4, NULL),
 (5, 5, NULL),
 (5, 6, NULL),
+(5, 7, NULL),
 (6, 1, NULL),
 (6, 2, NULL),
 (6, 3, NULL),
 (6, 4, NULL),
 (6, 5, NULL),
 (6, 6, NULL),
-(7, 1, NULL),
-(7, 2, NULL),
-(7, 3, NULL),
-(7, 4, NULL),
-(7, 5, NULL),
-(7, 6, NULL);
+(6, 7, NULL);
 
 -- --------------------------------------------------------
 
@@ -113,8 +113,8 @@ INSERT INTO `board` (`x`, `y`, `piece_color`) VALUES
 --
 
 CREATE TABLE `board_empty` (
-  `x` tinyint(1) NOT NULL,
-  `y` tinyint(1) NOT NULL,
+  `row` tinyint(1) NOT NULL,
+  `col` tinyint(1) NOT NULL,
   `piece_color` enum('R','B') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -122,49 +122,49 @@ CREATE TABLE `board_empty` (
 -- Άδειασμα δεδομένων του πίνακα `board_empty`
 --
 
-INSERT INTO `board_empty` (`x`, `y`, `piece_color`) VALUES
+INSERT INTO `board_empty` (`row`, `col`, `piece_color`) VALUES
 (1, 1, NULL),
 (1, 2, NULL),
 (1, 3, NULL),
 (1, 4, NULL),
 (1, 5, NULL),
 (1, 6, NULL),
+(1, 7, NULL),
 (2, 1, NULL),
 (2, 2, NULL),
 (2, 3, NULL),
 (2, 4, NULL),
 (2, 5, NULL),
 (2, 6, NULL),
+(2, 7, NULL),
 (3, 1, NULL),
 (3, 2, NULL),
 (3, 3, NULL),
 (3, 4, NULL),
 (3, 5, NULL),
 (3, 6, NULL),
+(3, 7, NULL),
 (4, 1, NULL),
 (4, 2, NULL),
 (4, 3, NULL),
 (4, 4, NULL),
 (4, 5, NULL),
 (4, 6, NULL),
+(4, 7, NULL),
 (5, 1, NULL),
 (5, 2, NULL),
 (5, 3, NULL),
 (5, 4, NULL),
 (5, 5, NULL),
 (5, 6, NULL),
+(5, 7, NULL),
 (6, 1, NULL),
 (6, 2, NULL),
 (6, 3, NULL),
 (6, 4, NULL),
 (6, 5, NULL),
 (6, 6, NULL),
-(7, 1, NULL),
-(7, 2, NULL),
-(7, 3, NULL),
-(7, 4, NULL),
-(7, 5, NULL),
-(7, 6, NULL);
+(6, 7, NULL);
 
 -- --------------------------------------------------------
 
@@ -184,7 +184,7 @@ CREATE TABLE `game_status` (
 --
 
 INSERT INTO `game_status` (`status`, `p_turn`, `result`, `last_change`) VALUES
-('not active', NULL, NULL, '2020-12-20 20:07:02');
+('not active', NULL, NULL, '2020-12-30 00:07:26');
 
 --
 -- Δείκτες `game_status`
@@ -214,8 +214,8 @@ CREATE TABLE `players` (
 --
 
 INSERT INTO `players` (`username`, `piece_color`, `token`, `last_action`) VALUES
-(NULL, 'R', NULL, '2020-12-20 20:06:01'),
-(NULL, 'B', NULL, '2020-12-20 20:06:06');
+(NULL, 'R', NULL, '2020-12-29 22:20:15'),
+(NULL, 'B', NULL, '2020-12-29 22:20:20');
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -225,7 +225,13 @@ INSERT INTO `players` (`username`, `piece_color`, `token`, `last_action`) VALUES
 -- Ευρετήρια για πίνακα `board`
 --
 ALTER TABLE `board`
-  ADD PRIMARY KEY (`x`,`y`);
+  ADD PRIMARY KEY (`row`,`col`);
+
+--
+-- Ευρετήρια για πίνακα `board_empty`
+--
+ALTER TABLE `board_empty`
+  ADD PRIMARY KEY (`row`,`col`);
 
 --
 -- Ευρετήρια για πίνακα `players`

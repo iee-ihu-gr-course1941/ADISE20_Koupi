@@ -22,12 +22,14 @@ switch ($r=array_shift($request))
             case null: handle_board($method,$input);
                 break;
             case 'piece':
-                if(!is_numeric($request[1]))
+                if(!is_numeric($request[0]))
                     {
                     header("HTTP/1.1 400 Bad Request");
                     print json_encode(['errormesg'=>"lathos syntetagmenes"]);
                     exit;
                     }
+                    if(count($request)<2)
+                    	$request[1]=0;
                  handle_piece($method, $request[0],$request[1],$input);
                 break;
             default: header("HTTP/1.1 404 Not Found");
@@ -61,16 +63,15 @@ function handle_board($method,$input)
         }
     }
 
-function handle_piece($method, $x,$y,$input)
+function handle_piece($method, $row,$col,$input)
     {
     if($method=='GET')
         {
-        show_piece($x,$y,$input);
+        show_piece($row,$col,$input);
         }
     else if($method=='PUT')
         {
-            
-        add_piece($x,$y,$input['token']);
+        add_piece($row,$input['token']);
         }
     }
 

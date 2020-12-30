@@ -20,10 +20,10 @@ $(function()
 function draw_empty_board()
 	{
 	var t='<table id="score4_table">';
-	for(var i=1;i<=7;i++)
+	for(var i=1;i<=6;i++)
 		{
 		t += '<tr>';
-		for(var j=1;j<=6;j++)
+		for(var j=1;j<=7;j++)
 			{
 			t += '<td  id="square_'+i+'_'+j+'"></td>';
 			}
@@ -43,21 +43,27 @@ function fill_board()
 function fill_board_by_data(data)
 	{
 	board=data;	
+	console.log(board);
 	for(var i=0;i<data.length;i++)
 		{
 		var o = data[i];
-				console.log(o);
+			console.log(o);
 
-		var id= '#square_'+o.x+'_'+o.y;
+		var id= '#square_'+o.row+'_'+o.col;
 		var c = (o.piece_color!=null)?o.piece_color:'';
 		//var im = (o.piece_color!=null)?'<img class="piece_color" src="imgs/'+c+'_piece.png">':'';
 		//im== (o.piece_color!=null)? 
 		//$(id).addClass('square').html(im);
-		$(id).css("background-image", "url(imgs/"+c+"_piece.png)");
+		if(o.piece_color!=null)
+			$(id).css("background-image", "url(imgs/"+c+"_piece.png)");
+		else
+			$(id).css("background-image", "");
 		}
+
 	if(me.piece_color!=null && game_status.p_turn==me.piece_color)
 		{
 		$('#move_div').show(1000);
+		$('#the_move').val("");
 		}
 	else 
 		{
@@ -121,6 +127,12 @@ function update_status(data)
 	game_status=data[0];
 	update_info();
 	clearTimeout(timer);
+
+	if(game_status.status=="ended")
+		{
+		alert("dsaojnikises");
+		}
+
 	if(game_status.p_turn==me.piece_color &&  me.piece_color!=null) 
 		{
 		x=0;
@@ -128,10 +140,11 @@ function update_status(data)
 		if(game_stat_old.p_turn!=game_status.p_turn)
 			{
 			fill_board();
+
 			}
 		$('#move_div').show(1000);
 		timer=setTimeout(function() { game_status_update();}, 15000);
-		} 
+		}
 	else
 		{
 		// must wait for something
@@ -158,11 +171,11 @@ function do_move()
 		alert('is null');
 		return;
 		}
-	$.ajax({url: "score4.php/board/piece/0/"+s,
+	$.ajax({url: "score4.php/board/piece/"+s,//
 			method: 'PUT',
 			dataType: "json",
 			contentType: 'application/json',
-			data: JSON.stringify( { x:8, y: 8})  ,
+			//data: JSON.stringify( { y:s})  ,
 			headers: {"X-Token": me.token},
 			success: move_result,
 			error: login_error }) ;
