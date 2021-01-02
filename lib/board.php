@@ -104,7 +104,7 @@ function check_move($inpc,$ccolor)
 	$color = array_column($pin, 'piece_color');
 	$row = array_column($pin, 'row');
 	$col=array_column($pin, 'col');
-	if($inpc>max($row) || $inpc<0 )
+	if($inpc>max($col) || $inpc<0 )
 		{
 		header("HTTP/1.1 400 Bad Request");
 		print json_encode(['errormesg'=>"lathos syntetagmenes"]);
@@ -126,11 +126,9 @@ function check_move($inpc,$ccolor)
 			print ($row[$i]." ".$col[$i]." ".$i);
 			print_r ($pin);*/
 
-		if(check_victory($row[$i],$col[$i],$ccolor))
+			if(end_game($row[$i],$col[$i],$ccolor))
 					{
-						//update ti vasi me ended to status
-				//		print("nikises");
-					//exit("niiikises");
+						
 					}
 			exit;
 			}
@@ -230,5 +228,39 @@ function check_victory($row,$col,$color)
 		return false;
 
 	}
+function is_full(){
+	$board=read_board();
+	$color = array_column($board, 'piece_color');
+	for ($i=0; $i<COLS; $i++){
+		$count=0;
+		if ($color[$i]==NULL){
+			break;
+		}
+		$count++;
+	}
+	if ($count==COLS){
+		return true;
+	}
+	return false;
+}
+
+function end_game($row,$col,$color){
+	if(check_victory($row,$col,$color)){
+		global $mysqli;
+		$sql = "update game_status set status='ended', result=?,p_turn=null where status='started'";
+		$st = $mysqli->prepare($sql);
+		$st->bind_param('s',$color);
+		$r = $st->execute();
+		return true;
+	}else if(is_full()){
+		global $mysqli;
+		$sql = "update game_status set status='ended', result='D',p_turn=null where status='started'";
+		$st = $mysqli->prepare($sql);
+		$r = $st->execute();
+		return true;
+	}
+	return false;
+}
+
 
 ?>

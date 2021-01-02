@@ -128,11 +128,15 @@ function update_status(data)
 	update_info();
 	clearTimeout(timer);
 
-	if(game_status.status=="ended")
-		{
-		alert("dsaojnikises");
+	if(game_status.status=="ended"){
+		if(game_status.result=="D"){
+			alert("isopolia");
+			return ;
+		}else if(game_status.result==me.piece_color){
+			var winner=me.username;
 		}
-
+		alert("nikise o " + winner);
+	}
 	if(game_status.p_turn==me.piece_color &&  me.piece_color!=null) 
 		{
 		x=0;
