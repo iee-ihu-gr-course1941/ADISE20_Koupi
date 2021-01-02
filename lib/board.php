@@ -122,14 +122,11 @@ function check_move($inpc,$ccolor)
 		if(is_null($color[$i]))	
 			{
 			do_move($row[$i],$col[$i]);
-			/*//print_r ($pin[$i]);
-			print ($row[$i]." ".$col[$i]." ".$i);
-			print_r ($pin);*/
 
-			if(end_game($row[$i],$col[$i],$ccolor))
-					{
+		check_g_end($row[$i],$col[$i],$ccolor);
+					
 						
-					}
+					
 			exit;
 			}
 		continue;
@@ -140,9 +137,6 @@ function check_move($inpc,$ccolor)
 function check_victory($row,$col,$color)
 	{
 	$pin=read_board();
-//	$row = array_column($pin, 'row');
-//	$col=array_column($pin, 'col');
-//	$color = array_column($pin, 'piece_color');
 	$board=[];
 
 
@@ -209,8 +203,6 @@ function check_victory($row,$col,$color)
 
 		}
 
-
-
 	//diagonios panw deksia pros katw aristera
 	$count=0;
 	for($d2=-min($row-1,COLS-$col,3 );$d2<=min(ROWS-$row,$col-1,3);$d2++)
@@ -244,7 +236,7 @@ function is_full(){
 	return false;
 }
 
-function end_game($row,$col,$color){
+function check_g_end($row,$col,$color){
 	if(check_victory($row,$col,$color)){
 		global $mysqli;
 		$sql = "update game_status set status='ended', result=?,p_turn=null where status='started'";

@@ -4,11 +4,12 @@ var game_status={};
 var board={};
 var last_update=new Date().getTime();
 var timer=null;
+var boardField;
 
 $(function()
 	{
 	draw_empty_board();
-	fill_board();
+	fill_board(null);
 	$('#score4_login').click( login_to_game);
 	$('#score4_reset').click( reset_board);
 	$('#do_move').click( do_move);
@@ -33,7 +34,7 @@ function draw_empty_board()
 	$('#score4_board').html(t);
 	}
 
-function fill_board()
+function fill_board(game_status)
 	{
 	$.ajax({url: "score4.php/board/",
 	        headers: {"X-Token": me.token},
@@ -69,6 +70,20 @@ function fill_board_by_data(data)
 		{
 		$('#move_div').hide(1000);
 		}
+
+	if(game_status.status=="ended")
+		{
+		clearTimeout(timer);
+		if(game_status.result=="D")
+			{
+			endOfGame("draw","");
+			}
+		else
+			{
+			endOfGame("win",game_status.result);
+			}
+		//return ;
+		}
 	}
 
 function login_to_game()
@@ -79,7 +94,7 @@ function login_to_game()
 		return ;
 		}
 	var p_color=$('#pcolor').val();
-	fill_board();
+	//fill_board();
 
 	$.ajax({url: "score4.php/players/"+p_color,
 												method: 'PUT',
@@ -91,10 +106,38 @@ function login_to_game()
 	 }
 
 
+
+ function endOfGame(status,color)
+ 	{
+	$.ajax({url: "score4.php/players/",
+												method: 'GET',
+												dataType: "json",
+												contentType: 'application/json',
+												success: function(data) {  
+
+																		if(status=="win")
+																			{
+																			//alert("Telos paixnidiou. Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
+																			$('#res').html("Telos paixnidiou. Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
+																			}
+																		else
+																			{
+																			alert("Oi paiktes "+data[0].username+","+data[1].username+" ήρθαν ισσόπαλοι");
+																			}
+
+																			 },
+												error: function(data){ login_error(data)} }) ;
+	 }
+ 	
+
+
 function reset_board()
 	{
+		game_status.status=null;
 	$.ajax({url: "score4.php/board/", headers: {"X-Token": me.token}, method: 'POST',  success: fill_board_by_data });
 	$('#move_div').hide();
+	//me={token:null,piece_color:null};//
+	//update_info();//
 	$('#game_initializer').show(2000);
 	}
 
@@ -113,6 +156,7 @@ function login_result(data)
 	game_status_update();
 	}
 
+
 function game_status_update()
 	{
 	clearTimeout(timer);
@@ -128,33 +172,31 @@ function update_status(data)
 	update_info();
 	clearTimeout(timer);
 
-	if(game_status.status=="ended"){
-		if(game_status.result=="D"){
-			alert("isopolia");
-			return ;
-		}else if(game_status.result==me.piece_color){
-			var winner=me.username;
-		}
-		alert("nikise o " + winner);
-	}
 	if(game_status.p_turn==me.piece_color &&  me.piece_color!=null) 
 		{
 		x=0;
 		// do play
 		if(game_stat_old.p_turn!=game_status.p_turn)
 			{
-			fill_board();
-
+			fill_board(game_status);
+			//timer=setTimeout(function() { game_status_update();}, 1000);
 			}
 		$('#move_div').show(1000);
-		timer=setTimeout(function() { game_status_update();}, 15000);
+		//timer=setTimeout(function() { game_status_update();}, 1000);
 		}
 	else
 		{
+		if(game_status.status=="ended")
+			{
+			fill_board(game_status);
+			}
+
 		// must wait for something
 		$('#move_div').hide(1000);
-		timer=setTimeout(function() { game_status_update();}, 4000);
+		timer=setTimeout(function() { game_status_update();}, 1000);
 		}
+
+
  	
 	}
 
