@@ -15,6 +15,16 @@ IMG.piece_color{
 }
 
 
+#container{height:150px;}
+
+/*jquery Styles*/
+.ui-dialog .ui-dialog-buttonpane { 
+    text-align: center;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { 
+    float: none;
+}
+
 
 tr {background-color: white;}
 td { border: 0.1em solid black; padding:0px;

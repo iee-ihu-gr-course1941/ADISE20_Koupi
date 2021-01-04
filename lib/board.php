@@ -163,8 +163,6 @@ function check_victory($row,$col,$color)
 
 	//katheti
 	$count=0;
-	//print (max($row-3,1) . " " .min($row+3,ROWS) );
-
 	for($r=max($row-3,1);$r<=min($row+3,ROWS);$r++)
 		{
 		if($board[$r][$col]==$color)

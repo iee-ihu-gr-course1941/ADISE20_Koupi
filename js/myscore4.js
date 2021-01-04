@@ -4,16 +4,16 @@ var game_status={};
 var board={};
 var last_update=new Date().getTime();
 var timer=null;
-var boardField;
 
 $(function()
 	{
 	draw_empty_board();
 	fill_board(null);
-	$('#score4_login').click( login_to_game);
-	$('#score4_reset').click( reset_board);
-	$('#do_move').click( do_move);
+	$('#do_move').button().click( do_move);
 	game_status_update();
+	$("#score4_reset").button().click(reset_board).hide();
+	$("#score4_login").button().click(login_to_game);
+
 	}
 );
 
@@ -68,7 +68,6 @@ function fill_board_by_data(data)
 		{
 		$('#move_div').hide(1000);
 		}
-	console.log(game_status.status);
 	if(game_status.status=="ended")
 		{
 		clearTimeout(timer);
@@ -80,7 +79,6 @@ function fill_board_by_data(data)
 			{
 			endOfGame("win",game_status.result);
 			}
-		//return ;
 		}
 	}
 
@@ -92,8 +90,6 @@ function login_to_game()
 		return ;
 		}
 	var p_color=$('#pcolor').val();
-	//fill_board();
-
 	$.ajax({url: "score4.php/players/"+p_color,
 												method: 'PUT',
 												dataType: "json",
@@ -114,17 +110,13 @@ function login_to_game()
 									success: function(data) {  
 									if(status=="win")
 										{
-
-										//alert("Telos paixnidiou. Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
-										//$('#res').html(" Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
-										//ela=data[0].piece_color==color?data[0].username:data[1].username;
-										$("<div id='r' style='display: table; text-align: center;' title='Τέλος παιχνιδιού'>Νικητής είναι ο "+(data[0].piece_color==res?data[0].username:data[1].username)
-											+"<br><br><button onclick='$(this).parent().parent().hide();' style=display: table-cell; vertical-align: bottom;>OK</button</div>").dialog();
+										$("<div id='r'  title='Τέλος παιχνιδιού'>Νικητής είναι ο "+(data[0].piece_color==res?data[0].username +"("+data[0].piece_color+")" : data[1].username+"("+data[1].piece_color+")")
+										+"</div>").dialog({buttons:{"ok":function(){ reset_board() ;$(this).dialog("close");}}});
 										}
 									else
 										{
-										$("<div id='r' style='display: table; text-align: center;' title='Τέλος παιχνιδιού'>Oi paiktes "+data[0].username+","+data[1].username+" ήρθαν ισσόπαλοι."
-											+"<br><br><button onclick='$(this).parent().parent().hide();' style=display: table-cell; vertical-align: bottom;>OK</button</div>").dialog();
+										$("<div id='r'  title='Τέλος παιχνιδιού'>Οι παίκτες "+data[0].username+", "+data[1].username+" ήρθαν ισσόπαλοι."
+											+"</div>").dialog({buttons:{"ok":function(){reset_board();$(this).dialog("close");}}});
 										}
 
 										 },
@@ -135,12 +127,17 @@ function login_to_game()
 
 function reset_board()
 	{
-		game_status.status=null;
-	$.ajax({url: "score4.php/board/", headers: {"X-Token": me.token}, method: 'POST',  success: fill_board_by_data });
 	$('#move_div').hide();
-	//me={token:null,piece_color:null};//
-	//update_info();//
+	game_status.result=null;
+	game_status.p_turn=null;
+	game_status.status=null;
+
+	$('#game_info').html("");
+	$.ajax({url: "score4.php/board/", headers: {"X-Token": me.token}, method: 'POST',  success: fill_board_by_data });
+	me.token=null;
+	me.piece_color=null;
 	$('#game_initializer').show(2000);
+
 	}
 
 function login_error(data) 
@@ -154,8 +151,9 @@ function login_result(data)
 	{
 	me = data[0];
 	$('#game_initializer').hide();
-	update_info();
 	game_status_update();
+	//update_info();
+
 	}
 
 
@@ -171,22 +169,72 @@ function update_status(data)
 	last_update=new Date().getTime();
 	var game_stat_old = game_status;
 	game_status=data[0];
-	update_info();
-	clearTimeout(timer);
+	//update_info();
+
+	if(game_status.status=="started")
+		{
+		$('#game_info').html('Σειρά του '+game_status.p_turn+' να παίξει');
+		$('#score4_reset').show();
+		}
+	
+	if(game_status.status=="initialized")
+		{
+		if(me.token!=null)
+			{
+			$('#score4_reset').show();
+			$('#game_info').html("Σύνδεση επιτυχής. Αναμονή για τον 2ο παίκτη...");
+			}
+		}
+	if(game_status.status=="not active")
+		{
+		console.log(me.token);
+
+		$('#game_info').html("");
+		$('#score4_reset').hide();
+		$("#move_div").hide();
+		if(me.token!=null)
+			{
+			clearTimeout(timer);
+
+			$("<div id='alert1' title='Τέλος παιχνιδιού'>Ο άλλος παίκτης εγκατέλειψε το παιχνίδι.</div>").dialog({buttons:{"Επανεκκίνηση":function(){ 	
+							$('#game_initializer').show(2000); 
+							me.token=null;
+							$(this).dialog("close");
+						 }}});
+			return ;
+			}
+		
+		}
+
+	if(game_status.status=="ended")
+		{
+		$('#score4_reset').hide();
+		$('#game_info').html("");
+		}
+
+	//clearTimeout(timer);
 
 	if(game_status.p_turn==me.piece_color &&  me.piece_color!=null) 
 		{
-		x=0;
 		// do play
 		if(game_stat_old.p_turn!=game_status.p_turn)
 			{
 			fill_board(game_status);
 			//timer=setTimeout(function() { game_status_update();}, 1000);
 			}
+		//else
+		/*if ($('#alert1').dialog('isOpen')!==true)
+			{
+			console.log(timer);
+			timer=setTimeout(function() { game_status_update();}, 1000);
+			
+			}*/
+		timer=setTimeout(function() { game_status_update();}, 1000);
+
+
 		$('#move_div').show(1000);
-		//timer=setTimeout(function() { game_status_update();}, 1000);
 		}
-	else
+	else if( me.piece_color!=null)
 		{
 		if(game_status.status=="ended")
 			{
@@ -195,18 +243,57 @@ function update_status(data)
 
 		// must wait for something
 		$('#move_div').hide(1000);
+
 		timer=setTimeout(function() { game_status_update();}, 1000);
 		}
+
+
 
 
  	
 	}
 
-
+/*
 function update_info()
 	{
-	$('#game_info').html("I am Player: "+me.piece_color+", my name is "+me.username +'<br>Token='+me.token+'<br>Game state: '+game_status.status+', '+ game_status.p_turn+' must play now.');
-	}
+	if(game_status.status=="started")
+		{
+		$('#game_info').html('Σειρά του '+game_status.p_turn+' να παίξει');
+		$('#score4_reset').show();
+
+		}
+	
+	if(game_status.status=="initialized")
+		{
+		if(me.token!=null)
+			{
+			$('#score4_reset').show();
+			$('#game_info').html("Σύνδεση επιτυχής. Αναμονή για τον 2ο παίκτη...");
+			}
+		}
+	if(game_status.status=="not active")
+		{
+		console.log(me.token);
+
+		$('#game_info').html("");
+		$('#score4_reset').hide();
+		$("move_div").hide();
+		if(me.token!=null)
+			{
+			clearTimeout(timer);
+			$("<div id='alert1' title='Τέλος παιχνιδιού'>Ο άλλος παίκτης εγκατέλειψε το παιχνίδι.</div>").dialog({buttons:{"Επανεκκίνηση":function(){ reset_board() ;$(this).dialog("close");}}});
+			}
+		
+		}
+
+	if(game_status.status=="ended")
+		{
+		$('#score4_reset').hide();
+		$('#game_info').html("");
+		}
+
+		
+	}*/
 
 
 function do_move()
