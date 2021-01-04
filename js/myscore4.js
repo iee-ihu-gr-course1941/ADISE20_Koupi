@@ -123,7 +123,8 @@ function login_to_game()
 										}
 									else
 										{
-										alert("Oi paiktes "+data[0].username+","+data[1].username+" ήρθαν ισσόπαλοι");
+										$("<div id='r' style='display: table; text-align: center;' title='Τέλος παιχνιδιού'>Oi paiktes "+data[0].username+","+data[1].username+" ήρθαν ισσόπαλοι."
+											+"<br><br><button onclick='$(this).parent().parent().hide();' style=display: table-cell; vertical-align: bottom;>OK</button</div>").dialog();
 										}
 
 										 },
