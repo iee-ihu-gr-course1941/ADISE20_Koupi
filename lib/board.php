@@ -139,7 +139,6 @@ function check_victory($row,$col,$color)
 	$pin=read_board();
 	$board=[];
 
-
 	for($i=1;$i<=ROWS;$i++)
 		{
 		for($j=1;$j<=COLS;$j++)
@@ -147,10 +146,6 @@ function check_victory($row,$col,$color)
 			$board[$i][$j]=$pin[ ($i-1)*COLS + $j-1]['piece_color'];
 			}
 		}
-
-		//print_r($board);
-
-
 
 	//orizontia
 	$count=0;
@@ -165,10 +160,6 @@ function check_victory($row,$col,$color)
 		else
 			$count=0;
 		}
-
-	//$max=max($x[$i]-3,1);
-	//$min=min(x[$i]+3,6);
-
 
 	//katheti
 	$count=0;
@@ -187,7 +178,6 @@ function check_victory($row,$col,$color)
 	//	print("$count $color|");
 		}
 	
-
 	//diagonios panw aristera pros katw deksia
 	$count=0;
 	for($d1=-min($row-1,$col-1,3 );$d1<=min(ROWS-$row,COLS-$col,3);$d1++)
@@ -215,7 +205,6 @@ function check_victory($row,$col,$color)
 			}
 		else
 			$count=0;
-
 		}
 		return false;
 
@@ -239,19 +228,16 @@ function is_full(){
 function check_g_end($row,$col,$color){
 	if(check_victory($row,$col,$color)){
 		global $mysqli;
-		$sql = "update game_status set status='ended', result=?,p_turn=null where status='started'";
+		$sql = "update game_status set status='ended', result=?	,p_turn=null where status='started'";
 		$st = $mysqli->prepare($sql);
 		$st->bind_param('s',$color);
 		$r = $st->execute();
-		return true;
 	}else if(is_full()){
 		global $mysqli;
 		$sql = "update game_status set status='ended', result='D',p_turn=null where status='started'";
 		$st = $mysqli->prepare($sql);
 		$r = $st->execute();
-		return true;
 	}
-	return false;
 }
 
 

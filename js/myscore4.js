@@ -44,17 +44,15 @@ function fill_board(game_status)
 function fill_board_by_data(data)
 	{
 	board=data;	
-	console.log(board);
+	//console.log(board);
 	for(var i=0;i<data.length;i++)
 		{
 		var o = data[i];
-			console.log(o);
+		//	console.log(o);
 
 		var id= '#square_'+o.row+'_'+o.col;
 		var c = (o.piece_color!=null)?o.piece_color:'';
-		//var im = (o.piece_color!=null)?'<img class="piece_color" src="imgs/'+c+'_piece.png">':'';
-		//im== (o.piece_color!=null)? 
-		//$(id).addClass('square').html(im);
+
 		if(o.piece_color!=null)
 			$(id).css("background-image", "url(imgs/"+c+"_piece.png)");
 		else
@@ -70,7 +68,7 @@ function fill_board_by_data(data)
 		{
 		$('#move_div').hide(1000);
 		}
-
+	console.log(game_status.status);
 	if(game_status.status=="ended")
 		{
 		clearTimeout(timer);
@@ -107,26 +105,29 @@ function login_to_game()
 
 
 
- function endOfGame(status,color)
+ function endOfGame(status,res)
  	{
 	$.ajax({url: "score4.php/players/",
-												method: 'GET',
-												dataType: "json",
-												contentType: 'application/json',
-												success: function(data) {  
+									method: 'GET',
+									dataType: "json",
+									contentType: 'application/json',
+									success: function(data) {  
+									if(status=="win")
+										{
 
-																		if(status=="win")
-																			{
-																			//alert("Telos paixnidiou. Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
-																			$('#res').html("Telos paixnidiou. Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
-																			}
-																		else
-																			{
-																			alert("Oi paiktes "+data[0].username+","+data[1].username+" ήρθαν ισσόπαλοι");
-																			}
+										//alert("Telos paixnidiou. Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
+										//$('#res').html(" Nikise o "+(data[0].piece_color==color?data[0].username:data[1].username));
+										//ela=data[0].piece_color==color?data[0].username:data[1].username;
+										$("<div id='r' style='display: table; text-align: center;' title='Τέλος παιχνιδιού'>Νικητής είναι ο "+(data[0].piece_color==res?data[0].username:data[1].username)
+											+"<br><br><button onclick='$(this).parent().parent().hide();' style=display: table-cell; vertical-align: bottom;>OK</button</div>").dialog();
+										}
+									else
+										{
+										alert("Oi paiktes "+data[0].username+","+data[1].username+" ήρθαν ισσόπαλοι");
+										}
 
-																			 },
-												error: function(data){ login_error(data)} }) ;
+										 },
+										error: function(data){ login_error(data)} }) ;
 	 }
  	
 
