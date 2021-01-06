@@ -75,8 +75,6 @@ function handle_piece($method, $row,$col,$input)
         }
     }
 
-
-
 function handle_player($method,$request,$input)
     {
     switch ($b=array_shift($request)) 
