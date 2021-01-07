@@ -1,5 +1,13 @@
 <?php
+
 require_once "dbconnect.php";
+
+/*
+$GLOBALS['$pin']=read_boa();
+$GLOBALS['$color'] = array_column($pin, 'piece_color');
+$GLOBALS['$x'] = array_column($pin, 'x');
+$GLOBALS['$y']=array_column($pin, 'y');*/
+
 
 function show_board($input)
 	{
@@ -56,11 +64,13 @@ function add_piece($x,$token)
 		exit;
 	}
 
+
 	if($status['p_turn']!=$color) {
 		header("HTTP/1.1 400 Bad Request");
 		print json_encode(['errormesg'=>"It is not your turn."]);
 		exit;
 	}
+
 	check_move($x,$color);
 	exit;
 	}
@@ -112,7 +122,11 @@ function check_move($inpc,$ccolor)
 		if(is_null($color[$i]))	
 			{
 			do_move($row[$i],$col[$i]);
-			check_g_end($row[$i],$col[$i],$ccolor);
+
+		check_g_end($row[$i],$col[$i],$ccolor);
+					
+						
+					
 			exit;
 			}
 		continue;
@@ -159,6 +173,7 @@ function check_victory($row,$col,$color)
 			}
 		else
 			$count=0;
+	//	print("$count $color|");
 		}
 	
 	//diagonios panw aristera pros katw deksia
@@ -222,4 +237,6 @@ function check_g_end($row,$col,$color){
 		$r = $st->execute();
 	}
 }
+
+
 ?>

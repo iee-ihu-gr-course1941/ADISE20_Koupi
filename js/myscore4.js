@@ -1,3 +1,4 @@
+
 var me={token:null,piece_color:null};
 var game_status={};
 var board={};
@@ -43,9 +44,12 @@ function fill_board(game_status)
 function fill_board_by_data(data)
 	{
 	board=data;	
+	//console.log(board);
 	for(var i=0;i<data.length;i++)
 		{
 		var o = data[i];
+		//	console.log(o);
+
 		var id= '#square_'+o.row+'_'+o.col;
 		var c = (o.piece_color!=null)?o.piece_color:'';
 
@@ -148,6 +152,8 @@ function login_result(data)
 	me = data[0];
 	$('#game_initializer').hide();
 	game_status_update();
+	//update_info();
+
 	}
 
 
@@ -179,7 +185,7 @@ function update_status(data)
 			$('#game_info').html("Σύνδεση επιτυχής. Αναμονή για τον 2ο παίκτη...");
 			}
 		}
-	if(game_status.status=="not active" || game_status.status=="aborted")
+	if(game_status.status=="not active")
 		{
 		console.log(me.token);
 
@@ -206,13 +212,26 @@ function update_status(data)
 		$('#game_info').html("");
 		}
 
+	//clearTimeout(timer);
+
 	if(game_status.p_turn==me.piece_color &&  me.piece_color!=null) 
 		{
+		// do play
 		if(game_stat_old.p_turn!=game_status.p_turn)
 			{
 			fill_board(game_status);
+			//timer=setTimeout(function() { game_status_update();}, 1000);
 			}
+		//else
+		/*if ($('#alert1').dialog('isOpen')!==true)
+			{
+			console.log(timer);
+			timer=setTimeout(function() { game_status_update();}, 1000);
+			
+			}*/
 		timer=setTimeout(function() { game_status_update();}, 1000);
+
+
 		$('#move_div').show(1000);
 		}
 	else if( me.piece_color!=null)
@@ -221,16 +240,67 @@ function update_status(data)
 			{
 			fill_board(game_status);
 			}
+
+		// must wait for something
 		$('#move_div').hide(1000);
+
 		timer=setTimeout(function() { game_status_update();}, 1000);
 		}
 
+
+
+
+ 	
 	}
+
+/*
+function update_info()
+	{
+	if(game_status.status=="started")
+		{
+		$('#game_info').html('Σειρά του '+game_status.p_turn+' να παίξει');
+		$('#score4_reset').show();
+
+		}
+	
+	if(game_status.status=="initialized")
+		{
+		if(me.token!=null)
+			{
+			$('#score4_reset').show();
+			$('#game_info').html("Σύνδεση επιτυχής. Αναμονή για τον 2ο παίκτη...");
+			}
+		}
+	if(game_status.status=="not active")
+		{
+		console.log(me.token);
+
+		$('#game_info').html("");
+		$('#score4_reset').hide();
+		$("move_div").hide();
+		if(me.token!=null)
+			{
+			clearTimeout(timer);
+			$("<div id='alert1' title='Τέλος παιχνιδιού'>Ο άλλος παίκτης εγκατέλειψε το παιχνίδι.</div>").dialog({buttons:{"Επανεκκίνηση":function(){ reset_board() ;$(this).dialog("close");}}});
+			}
+		
+		}
+
+	if(game_status.status=="ended")
+		{
+		$('#score4_reset').hide();
+		$('#game_info').html("");
+		}
+
+		
+	}*/
 
 
 function do_move()
 	{
 	var s = $('#the_move').val();
+	//var a = s.trim().split(/[ ]+/);
+	//a[1]=0;//
 	if(s=="")
 		{
 		alert('is null');
@@ -240,10 +310,30 @@ function do_move()
 			method: 'PUT',
 			dataType: "json",
 			contentType: 'application/json',
+			//data: JSON.stringify( { y:s})  ,
 			headers: {"X-Token": me.token},
 			success: move_result,
 			error: login_error }) ;
 	}
+
+
+ /*function AjaxFailAlert(jqXHR, textStatus) {
+	if (jqXHR.readyState === 0 || jqXHR.status === 0) return;
+	else if (jqXHR.status == 404)
+		{alert("Requested page not found. [404]");}
+	else if (jqXHR.status == 500)
+		{alert("Internal Server Error [500].");}
+	else if (textStatus === "parsererror")
+		{alert("Requested JSON parse failed.");}
+	else if (textStatus === "timeout")
+		{alert("Time out error.");}
+	else if (textStatus === "abort")
+		{alert("Ajax request aborted.");}
+	else
+		{alert("Uncaught Error.\n" + jqXHR.responseText);}
+}*/
+
+
 
 function move_result(data){
 	game_status_update();
